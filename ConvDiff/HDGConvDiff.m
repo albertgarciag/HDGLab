@@ -25,13 +25,13 @@ close all
 setpathConvDiff
 
 %% User defined parameters
-meshFile = 'squareH1P8_convdiff';
+meshFile = 'squareH4P1_convdiff2';
 
 hdg.tau = 1;
 hdg.problem = 'ConvDiff';
 problemParams.conductivity = 1;
 problemParams.charLength = 1;
-problemParams.example = 1;
+problemParams.example = 2;
 
 outputPath = 'resConvDiff';
 computeError = 0;  

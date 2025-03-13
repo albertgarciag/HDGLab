@@ -5,8 +5,7 @@ if nsd==2
         case 1
             u = convdiff_2D_Ex1_Neumann(X,n,problemParams,iMat);
         case 2
-            disp('Example not implemented')
-            %u = poisson_2D_Ex2_Neumann(X,n,problemParams,iMat);
+            u = convdiff_2D_Ex2_Neumann(X,n,problemParams,iMat);
     end
 elseif nsd==3
     switch example

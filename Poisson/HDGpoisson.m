@@ -25,7 +25,7 @@ close all
 setpathPoisson
 
 %% User defined parameters
-meshFile = 'squareH1P1';
+meshFile = 'squareH3P1';
 
 hdg.tau = 1;
 hdg.problem = 'Poisson';
