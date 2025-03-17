@@ -141,7 +141,7 @@ for iFace = 1:nOfFaces
             All(indexFaceV,indexFaceV) = All(indexFaceV,indexFaceV) - NHat*bsxfun(@times, NHat', taunahat.*wXY); % tau-n'a
         elseif problemParams.totalFluxNeumann==0
             Alu(indexFaceV,faceNodes) = Alu(indexFaceV,faceNodes) + NHat*bsxfun(@times,N', tau_d(iFace)*wXY); 
-            All(indexFaceV,indexFaceV) = All(indexFaceV,indexFaceV) - NHat*bsxfun(@times, NHat', tau(iFace)*wXY); 
+            All(indexFaceV,indexFaceV) = All(indexFaceV,indexFaceV) - NHat*bsxfun(@times, NHat', tau_d(iFace)*wXY); 
         end
         t = convdiff_Neumann(Xg,n,problemParams,matElem,nsd,problemParams.example);
         fl(indexFaceV) = fl(indexFaceV) - NHat*(t.*wXY);
