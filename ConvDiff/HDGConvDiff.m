@@ -27,11 +27,15 @@ setpathConvDiff
 %% User defined parameters
 meshFile = 'squareH4P1_convdiff2';
 
-hdg.tau = 1;
+hdg.tau_d = 0.5;
+hdg.tau_a = 0.5;
+hdg.tau = hdg.tau_d + hdg.tau_a;
 hdg.problem = 'ConvDiff';
 problemParams.conductivity = 1;
 problemParams.charLength = 1;
 problemParams.example = 2;
+% 1 if NBC evaluates the total flux, 0 if only q
+problemParams.totalFluxNeumann = 0;
 
 outputPath = 'resConvDiff';
 computeError = 0;  
@@ -66,3 +70,5 @@ save(solutionFile,'mesh','refElem','refFace','hdg','ctt','u','uHat','uStar','q',
 
 %% Postprocess
 hdg_Poisson_Postprocess
+figure(iFig+1)
+trisurf(mesh.indexT, mesh.X(:,1), mesh.X(:,2), u)

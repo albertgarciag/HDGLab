@@ -40,11 +40,12 @@
 %
 % See also: hdg_Poisson_ElementalMatrices, hdg_Poisson_LocalProblem
 %           hdgElemToFaceIndex
-function [Zql,Zul,zqf,zuf,Ke,fe] = hdg_ConvDiff_ElementalMatrices(refElem,refFace,Xe,pElem,matElem,tau,faceInfo,ctt,problemParams)
+function [Zql,Zul,zqf,zuf,Ke,fe] = hdg_ConvDiff_ElementalMatrices(refElem,refFace,Xe,pElem,matElem,tau,tau_d,faceInfo,ctt,problemParams)
 kappa = problemParams.conductivity(matElem);
 nOfFaces = refElem(pElem).nOfFaces;
 % tau = repmat(tau*kappa/problemParams.charLength,1,nOfFaces);
 tau = repmat(tau,1,nOfFaces);
+tau_d = repmat(tau_d,1,nOfFaces);
 nsd = refElem(pElem).nsd;
 nOfElementNodes = refElem(pElem).nOfNodes;
 ndofU = nOfElementNodes;
@@ -60,6 +61,7 @@ fl = zeros(ndofUHat,1);
 Auu = zeros(ndofU,ndofU);
 Auq = zeros(ndofU,ndofQ);
 Aul = zeros(ndofU,ndofUHat);
+Alu = zeros(ndofUHat,ndofU);
 Aqq = zeros(ndofQ,ndofQ);
 Aql = zeros(ndofQ,ndofUHat);
 All = zeros(ndofUHat,ndofUHat);
@@ -112,6 +114,7 @@ for iFace = 1:nOfFaces
     if iNumF==ctt.iBC_Interior     
         Auu(faceNodes,faceNodes) = Auu(faceNodes,faceNodes) + N*bsxfun(@times, N', tau(iFace)*wXY);
         Aul(faceNodes,indexFaceV) = Aul(faceNodes,indexFaceV) + N*bsxfun(@times, NHat', taunahat.*wXY); % tau-n'a
+        Alu(indexFaceV,faceNodes) = Alu(indexFaceV,faceNodes) + NHat*bsxfun(@times,N', tau(iFace)*wXY);
         All(indexFaceV,indexFaceV) = All(indexFaceV,indexFaceV) - NHat*bsxfun(@times, NHat', tau(iFace)*wXY);
         
         nNodesNsd = nsd*faceNodes;
@@ -132,7 +135,14 @@ for iFace = 1:nOfFaces
     elseif iNumF==ctt.iBC_Neumann
         Auu(faceNodes,faceNodes) = Auu(faceNodes,faceNodes) + N*bsxfun(@times, N', tau(iFace)*wXY);
         Aul(faceNodes,indexFaceV) = Aul(faceNodes,indexFaceV) + N*bsxfun(@times, NHat', taunahat.*wXY); % tau-n'a
-        All(indexFaceV,indexFaceV) = All(indexFaceV,indexFaceV) - NHat*bsxfun(@times, NHat', taunahat.*wXY); % tau-n'a
+        % different matrices depending on the definition of global problem
+        if problemParams.totalFluxNeumann==1
+            Alu(indexFaceV,faceNodes) = Alu(indexFaceV,faceNodes) + NHat*bsxfun(@times,N', tau(iFace)*wXY); 
+            All(indexFaceV,indexFaceV) = All(indexFaceV,indexFaceV) - NHat*bsxfun(@times, NHat', taunahat.*wXY); % tau-n'a
+        elseif problemParams.totalFluxNeumann==0
+            Alu(indexFaceV,faceNodes) = Alu(indexFaceV,faceNodes) + NHat*bsxfun(@times,N', tau_d(iFace)*wXY); 
+            All(indexFaceV,indexFaceV) = All(indexFaceV,indexFaceV) - NHat*bsxfun(@times, NHat', tau(iFace)*wXY); 
+        end
         t = convdiff_Neumann(Xg,n,problemParams,matElem,nsd,problemParams.example);
         fl(indexFaceV) = fl(indexFaceV) - NHat*(t.*wXY);
         
@@ -160,7 +170,7 @@ zqf = Z(vQ,ndofUHat+1);
 Zql = Zql(:,indexFlip);
 Zul = Zul(:,indexFlip);
 Alq = Aql(:,indexFlip)';
-Alu = Aul(:,indexFlip)';
+Alu = Alu(indexFlip,:); %canvi (no estic segur del que estic fent)
 All = All(indexFlip,indexFlip);
 fl  = fl(indexFlip);
 % Elemental matrices
