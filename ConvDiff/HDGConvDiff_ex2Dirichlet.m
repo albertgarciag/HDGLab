@@ -33,9 +33,9 @@ hdg.tau = hdg.tau_d + hdg.tau_a;
 hdg.problem = 'ConvDiff';
 problemParams.conductivity = 1;
 problemParams.charLength = 1;
-problemParams.example = 3;
+problemParams.example = 2;
 % 1 if NBC evaluates the total flux, 0 if only q
-problemParams.totalFluxNeumann = 1;
+problemParams.totalFluxNeumann = 0;
 
 outputPath = 'resConvDiff';
 computeError = 0;  
@@ -43,8 +43,7 @@ computeError = 0;
 %% Computation
 load(meshFile);
 problemParams.nOfMat = max(mesh.matElem);
-mesh.extFaces(mesh.extFaces(:,4)==3,3)=2;
-mesh.extFaces(mesh.extFaces(:,4)==2,3)=2;
+mesh.extFaces(:,3)=1;
 
 disp('HDG preprocess...')
 [refElem, refFace] = getRefData(mesh.pElem, mesh.nsd, mesh.optionNodes);

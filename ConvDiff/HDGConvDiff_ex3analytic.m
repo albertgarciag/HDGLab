@@ -25,7 +25,7 @@ close all
 setpathConvDiff
 
 %% User defined parameters
-meshFile = 'squareH4P1';
+meshFile = 'squareH2P1';
 
 hdg.tau_d = 0.5;
 hdg.tau_a = 0.5;
@@ -35,7 +35,7 @@ problemParams.conductivity = 1;
 problemParams.charLength = 1;
 problemParams.example = 3;
 % 1 if NBC evaluates the total flux, 0 if only q
-problemParams.totalFluxNeumann = 1;
+problemParams.totalFluxNeumann = 0;
 
 outputPath = 'resConvDiff';
 computeError = 0;  

@@ -6,6 +6,8 @@ if nsd==2
             u = convdiff_2D_Ex1_Neumann(X,n,problemParams,iMat);
         case 2
             u = convdiff_2D_Ex2_Neumann(X,n,problemParams,iMat);
+        case 3
+            u = convdiff_2D_Ex3_Neumann(X,n,problemParams,iMat);
     end
 elseif nsd==3
     switch example
