@@ -27,8 +27,9 @@ setpathConvDiff
 %% User defined parameters
 meshFile = 'squareH3P5';
 
-hdg.tau_d = 1;
-hdg.beta = 0.1;
+hdg.tau_d = 0.5;
+hdg.tau_a = 0.5;
+hdg.tau = hdg.tau_d + hdg.tau_a;
 hdg.problem = 'ConvDiff';
 problemParams.conductivity = 1;
 problemParams.charLength = 1;
@@ -42,15 +43,8 @@ computeError = 1;
 %% Computation
 load(meshFile);
 problemParams.nOfMat = max(mesh.matElem);
-mesh.extFaces(mesh.extFaces(:,4)==1,3)=1;
+mesh.extFaces(mesh.extFaces(:,4)==3,3)=2;
 mesh.extFaces(mesh.extFaces(:,4)==2,3)=2;
-mesh.extFaces(mesh.extFaces(:,4)==3,3)=1;
-mesh.extFaces(mesh.extFaces(:,4)==4,3)=2;
-
-%computation of tau_d and tau_a
-a = convdiff_convection(mesh.X,problemParams,[],mesh.nsd,problemParams.example);
-hdg.tau_a = hdg.beta * max(sqrt(sum(a.^2,2)));
-hdg.tau = hdg.tau_d + hdg.tau_a;
 
 disp('HDG preprocess...')
 [refElem, refFace] = getRefData(mesh.pElem, mesh.nsd, mesh.optionNodes);
@@ -73,7 +67,7 @@ else
     qErr=[];
 end
 
-solutionFile = sprintf('%s/%s_ex%d_beta%d', outputPath, meshFile, problemParams.example,hdg.beta*100);
+solutionFile = sprintf('%s/%s_ex%d', outputPath, meshFile, problemParams.example);
 save(solutionFile,'mesh','refElem','refFace','hdg','ctt','u','uHat','uStar','q','uErr','qErr');
 
 %% Postprocess

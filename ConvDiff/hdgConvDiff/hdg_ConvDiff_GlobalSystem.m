@@ -60,7 +60,7 @@ for iElem = 1:mesh.nOfElements
     faceInfo = hdg.faceInfo(iElem);
     
     % Elemental matrices (from faces to elements)  
-    [Zqle,Zule,zqfe,zufe,Ke,fe] = hdg_ConvDiff_ElementalMatrices(refElem,refFace,Xe,pElem,matElem,hdg.tau,hdg.tau_d,faceInfo,ctt,problemParams);
+    [Zqle,Zule,zqfe,zufe,Ke,fe] = hdg_ConvDiff_ElementalMatrices(refElem,refFace,Xe,pElem,matElem,hdg.tau,hdg.tau_a,hdg.tau_d,faceInfo,ctt,problemParams);
     
     % Store the local solver
     local(iElem).Zql = Zqle;

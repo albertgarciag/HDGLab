@@ -38,7 +38,7 @@ problemParams.example = 2;
 problemParams.totalFluxNeumann = 0;
 
 outputPath = 'resConvDiff';
-computeError = 0;  
+computeError = 0;
 
 %% Computation
 load(meshFile);

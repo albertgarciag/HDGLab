@@ -40,12 +40,13 @@
 %
 % See also: hdg_Poisson_ElementalMatrices, hdg_Poisson_LocalProblem
 %           hdgElemToFaceIndex
-function [Zql,Zul,zqf,zuf,Ke,fe] = hdg_ConvDiff_ElementalMatrices(refElem,refFace,Xe,pElem,matElem,tau,tau_d,faceInfo,ctt,problemParams)
+function [Zql,Zul,zqf,zuf,Ke,fe] = hdg_ConvDiff_ElementalMatrices(refElem,refFace,Xe,pElem,matElem,tau,tau_a,tau_d,faceInfo,ctt,problemParams)
 kappa = problemParams.conductivity(matElem);
 nOfFaces = refElem(pElem).nOfFaces;
-% tau = repmat(tau*kappa/problemParams.charLength,1,nOfFaces);
+tau_d = repmat(tau*kappa/problemParams.charLength,1,nOfFaces);
+tau_a = repmat(tau_a,1,nOfFaces);
 tau = repmat(tau,1,nOfFaces);
-tau_d = repmat(tau_d,1,nOfFaces);
+%tau_d = repmat(tau_d,1,nOfFaces);
 nsd = refElem(pElem).nsd;
 nOfElementNodes = refElem(pElem).nOfNodes;
 ndofU = nOfElementNodes;
