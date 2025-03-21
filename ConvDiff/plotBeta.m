@@ -1,0 +1,79 @@
+clearvars
+close all
+
+addpath ./export_fig
+
+addpath ./resConvDiff/beta/
+% addpath ../resStokes(convergenceGMSH
+
+%% Setup
+domain = 'square';
+% domain = 'cube';
+% rescale = 1;
+% domain = 'ring';
+rescale = 5;
+nsd = 2;
+exID = 3; % 3 only example implemented
+
+betas = 10.^linspace(-2,2.8,13);
+
+isExportFig = 1;
+
+% hMeshes = [4 4 4 4 3];
+hMeshes = [4 4 4 4 4];
+% hMeshes = [3 3 3 3 3];
+pRefinements = [1 2 3 4 5];
+
+col = {'b', 'r', 'g', 'm', 'k'};
+sty = {'-', '--'};
+sym = {'o', 's', 'd', '^', '*'};
+
+%% PLOT errU, beta
+
+nb = length(betas);
+errU = zeros(nb,1);
+errUstar = zeros(nb,1);
+
+for iBeta = 1:nb
+    beta = betas(iBeta);
+    betafloor = floor(beta*100);
+    solutionFile = sprintf('%sH2P4_ex%d_beta%d.mat', domain,exID,betafloor);
+    load(solutionFile,'mesh','uErr')
+    errU(iBeta) = sqrt(sum((uErr.L2).^2,2));
+    errUstar(iBeta) = sqrt(sum((uErr.L2Star).^2,2));
+end
+
+figure(1), hold on
+plot(log10(betas), log10(errU), 'k-o', 'LineWidth', 2, 'MarkerSize', 8)
+plot(log10(betas), log10(errUstar), 'k--s', 'LineWidth', 2, 'MarkerSize', 8)
+
+box on
+grid on
+xlabel('log$_{10}$($\beta$)','Interpreter','latex','FontName','cmr12')
+ylabel('log$_{10}(||E||_{L^2(\Omega)})$','Interpreter','latex','FontName','cmr12')
+
+set(gca,'FontSize',22,'FontName','cmr12','TickLabelInterpreter','latex');
+
+leg = {
+    sprintf('{\\boldmath{$u$}}'), sprintf('{\\boldmath{$u_{\\star}$}}') 
+       };
+hLeg = legend(leg, 'Location', 'northeast', 'FontName','cmr12');
+set(hLeg,'Interpreter','latex');
+
+%% Export
+set(gcf,'Color','w');
+if isExportFig
+    if nsd == 2
+        switch exID
+            case 1
+                export_fig convdiff2D_beta_ex1 -pdf -transparent -r800
+            case 2
+                export_fig convdiff2D_beta_ex2 -pdf -transparent -r800
+            case 3
+                export_fig convdiff2D_beta_ex3 -pdf -transparent -r800
+        end
+    else
+        export_fig stokes3D_hConvUUstar_ex1 -pdf -transparent -r800
+    end
+end
+hold off

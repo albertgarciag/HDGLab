@@ -25,27 +25,28 @@ close all
 setpathConvDiff
 
 %% User defined parameters
-meshFile = 'squareH3P5';
+meshFile = 'squareH3P4';
+beta = 10.^linspace(-2,2.8,13);
 
 hdg.tau_d = 1;
-hdg.beta = 0.1;
+hdg.beta = 40;
 hdg.problem = 'ConvDiff';
 problemParams.conductivity = 1;
 problemParams.charLength = 1;
-problemParams.example = 3;
+problemParams.example = 2;
 % 1 if NBC evaluates the total flux, 0 if only q
 problemParams.totalFluxNeumann = 1;
 
 outputPath = 'resConvDiff';
-computeError = 1;  
+computeError = 0;  
 
 %% Computation
 load(meshFile);
 problemParams.nOfMat = max(mesh.matElem);
 mesh.extFaces(mesh.extFaces(:,4)==1,3)=1;
 mesh.extFaces(mesh.extFaces(:,4)==2,3)=2;
-mesh.extFaces(mesh.extFaces(:,4)==3,3)=1;
-mesh.extFaces(mesh.extFaces(:,4)==4,3)=2;
+mesh.extFaces(mesh.extFaces(:,4)==3,3)=2;
+mesh.extFaces(mesh.extFaces(:,4)==4,3)=1;
 
 %computation of tau_d and tau_a
 a = convdiff_convection(mesh.X,problemParams,[],mesh.nsd,problemParams.example);
@@ -73,7 +74,7 @@ else
     qErr=[];
 end
 
-solutionFile = sprintf('%s/%s_ex%d_beta%d', outputPath, meshFile, problemParams.example,hdg.beta*100);
+solutionFile = sprintf('%s/%s_ex%d_beta%d', outputPath, meshFile, problemParams.example,floor(hdg.beta*100));
 save(solutionFile,'mesh','refElem','refFace','hdg','ctt','u','uHat','uStar','q','uErr','qErr');
 
 %% Postprocess
